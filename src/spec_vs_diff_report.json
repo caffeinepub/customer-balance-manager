@@ -1,0 +1,45 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-05T08:18:31.519Z",
+  "summary": "The diff updates WhatsApp message formatting in `frontend/src/utils/whatsapp.ts` to a Marathi template that greets the customer, injects the customer name, and formats the outstanding balance as INR. However, the diff does not show any UI/action wiring changes to ensure the WhatsApp message edit dialog is pre-filled from this new template or that edited text is used to generate the deep link.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "When a user selects \"Send outstanding via WhatsApp\" for an eligible customer, the WhatsApp message edit dialog opens with the message pre-filled using the new template (customer name + INR-formatted outstanding balance), and the user can edit it with the edited text used to generate the WhatsApp deep link.",
+      "reason": "The diff only shows utility changes in `frontend/src/utils/whatsapp.ts` and does not include any changes in the action handler / dialog-opening code (e.g., CustomerTable or dialog components) that would set the dialog’s initial message value from the new formatter and then use the edited message to generate the link.",
+      "evidence": [
+        "frontend/src/utils/whatsapp.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Added/updated WhatsApp eligibility validation with specific error messages (mobile required, invalid format, no outstanding balance).",
+      "reason": "REQ-1 only requests updating the default WhatsApp reminder message template; it does not request introducing or changing eligibility validation behavior or error messages.",
+      "evidence": [
+        "frontend/src/utils/whatsapp.ts"
+      ]
+    },
+    {
+      "description": "Implemented/changed phone number normalization logic (strip non-digits except '+', enforce >=10 digits).",
+      "reason": "REQ-1 does not mention modifying phone normalization/validation logic; only the message template content/placeholder replacement is requested.",
+      "evidence": [
+        "frontend/src/utils/whatsapp.ts"
+      ]
+    },
+    {
+      "description": "Implemented/changed WhatsApp deep link generation to use `https://wa.me/<number>?text=<encoded>`.",
+      "reason": "REQ-1 focuses on the message template and prefill/edit behavior; it does not request changing the URL format used for WhatsApp deep links.",
+      "evidence": [
+        "frontend/src/utils/whatsapp.ts"
+      ]
+    }
+  ],
+  "confidence": 0.66,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/utils/whatsapp.ts",
+    "project_state.json"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "build_request",
+  "title": "Update default WhatsApp reminder message template",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Update the default WhatsApp reminder message template used by the \"Send outstanding via WhatsApp\" action so the message starts with a greeting and includes the selected customer’s name and formatted outstanding balance amount, using this exact template text (with placeholders replaced at runtime): \"नमस्कार (Customer Name) आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे. (Outstanding Balance)\".",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "set whatsapp massage  नमस्कार (Customer Name)                  आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे.                   (Outstanding Balance)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When a user selects \"Send outstanding via WhatsApp\" for a customer with a valid mobile number and outstandingBalance > 0, the WhatsApp message edit dialog opens with the message pre-filled using the new template.",
+        "The pre-filled message replaces \"(Customer Name)\" with the selected customer’s name.",
+        "The pre-filled message replaces \"(Outstanding Balance)\" with the customer’s outstanding balance formatted as INR (consistent with current formatting behavior).",
+        "The user can still edit the message in the dialog and the edited text is used to generate the WhatsApp deep link."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify any files under frontend/src/components/ui (read-only components).",
+    "Do not edit files listed in frontend.immutablePaths from SYSTEM_CONTEXT."
+  ],
+  "nonGoals": [
+    "Do not add third-party WhatsApp APIs or any server-side WhatsApp sending.",
+    "Do not introduce new authentication methods beyond Internet Identity.",
+    "Do not add a full settings screen for editing templates unless explicitly required."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

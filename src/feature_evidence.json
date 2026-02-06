@@ -1,0 +1,25 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-default-whatsapp-reminder-message-template-used-by-the-send-outstanding-via-whatsapp-action-so-the-message-starts-with-a-greeting-and-includes-the-selected-customer-s-name-and-formatted-outstanding-balance-amount-using-this-exact-template-text-with-placeholders-replaced-at-runtime-customer-name-outstanding-balance",
+      "featureTitle": "Update the default WhatsApp reminder message template used by the \"Send outstanding via WhatsApp\" action so the message starts with a greeting and includes the selected customer’s name and formatted outstanding balance amount, using this exact template text (with placeholders replaced at runtime): \"नमस्कार (Customer Name) आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे. (Outstanding Balance)\".",
+      "files": [
+        "frontend/src/utils/whatsapp.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

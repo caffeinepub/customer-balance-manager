@@ -1,0 +1,29 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Update WhatsApp outstanding reminder default template",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Update the default WhatsApp outstanding reminder message so it starts with a greeting and includes the selected customer name and INR-formatted outstanding balance using the exact provided template.",
+      "acceptanceCriteria": [
+        "When a user selects \"Send outstanding via WhatsApp\" for a customer with a valid mobile number and outstandingBalance > 0, the WhatsApp message edit dialog opens with the message pre-filled using the new template.",
+        "The pre-filled message replaces \"(Customer Name)\" with the selected customer’s name.",
+        "The pre-filled message replaces \"(Outstanding Balance)\" with the customer’s outstanding balance formatted as INR (consistent with current formatting behavior).",
+        "The user can still edit the message in the dialog and the edited text is used to generate the WhatsApp deep link."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/whatsapp.ts",
+          "operation": "modify",
+          "description": "Update formatOutstandingMessage() to produce the exact required template text: \"नमस्कार (Customer Name) आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे. (Outstanding Balance)\", replacing placeholders at runtime with the provided customer name and the existing INR currency formatting."
+        },
+        {
+          "path": "frontend/src/components/CustomerTable.tsx",
+          "operation": "modify",
+          "description": "Confirm the \"Send outstanding via WhatsApp\" action continues to use formatOutstandingMessage(customer.name, customer.outstandingBalance) as the source of the dialog’s default message, ensuring the updated template is what gets pre-filled before the user edits and sends."
+        }
+      ]
+    }
+  ]
+}

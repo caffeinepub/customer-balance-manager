@@ -1,0 +1,18 @@
+{
+  "frontend/src/App.tsx": "Main application component that handles authentication flow, profile setup, and renders the customer dashboard wrapped with theme provider, refresh provider, and toast notifications.",
+  "frontend/src/hooks/useQueries.ts": "Custom React Query hooks for all backend operations including customer CRUD, payment collection, user profile management, and reset total collected payments functionality with improved error normalization that provides human-readable messages for authorization and other backend errors.",
+  "frontend/src/components/Header.tsx": "Application header with branding, theme toggle, refresh button with loading state, and user dropdown menu for logout functionality.",
+  "frontend/src/components/Footer.tsx": "Simple footer component with attribution link to caffeine.ai.",
+  "frontend/src/components/LoginScreen.tsx": "Landing page with login functionality and feature highlights for unauthenticated users.",
+  "frontend/src/components/ProfileSetupModal.tsx": "Modal dialog for first-time user profile setup to collect user name.",
+  "frontend/src/components/CustomerDashboard.tsx": "Main dashboard view with statistics cards, search/filter controls, customer table, and action buttons for add customer, import Excel, and delete all customers with confirmation dialog and improved async error handling.",
+  "frontend/src/components/StatsCards.tsx": "Statistics cards displaying customer metrics with INR formatting, featuring a \"Reset Collected Amount\" button with confirmation dialog in the Collected card that allows authenticated users to reset the total collected payments to zero.",
+  "frontend/src/components/CustomerTable.tsx": "Data table component displaying customer records with name, mobile number, balance in INR, payment status badges, and action menu including WhatsApp send outstanding (now with editable message dialog), collect payment, edit, and delete options with appropriate validation and toast notifications.",
+  "frontend/src/components/CustomerFormDialog.tsx": "Modal form for creating new customers or editing existing customer information with comprehensive validation, backend error handling, and refresh-triggered error state clearing via mutation.reset().",
+  "frontend/src/components/ExcelImportDialog.tsx": "Two-step dialog for uploading CSV files with 4-column format, parsing customer data with validation, importing with confirmation, and refresh-triggered error state clearing.",
+  "frontend/src/index.css": "Global styles with OKLCH color system customized for a professional financial application aesthetic with blue primary colors.",
+  "frontend/src/components/PaymentCollectionDialog.tsx": "Modal dialog component for recording customer payments with amount input, balance display, calculated new balance preview, INR formatting, and refresh-triggered error state clearing.",
+  "frontend/src/utils/whatsapp.ts": "Utility functions for WhatsApp integration including phone number normalization, message formatting with Marathi template (नमस्कार greeting, customer name, payment request, and INR-formatted balance separated by blank lines), WhatsApp link generation, and eligibility validation.",
+  "frontend/src/components/WhatsAppMessageDialog.tsx": "Reusable dialog component that displays a multiline text area for editing WhatsApp messages before sending, with Cancel and Send actions.",
+  "frontend/src/context/AppRefreshContext.tsx": "React context provider that exposes a refresh function to invalidate and refetch core dashboard queries (customers, balances, total collected, profile) with toast notifications and a refresh token signal for clearing dialog error states."
+}

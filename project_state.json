@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 27,
+  "summary": "Customer Balance Manager is a full-stack Internet Computer (DFINITY) application with a Motoko canister backend and a React + TanStack React Query frontend. Authenticated users (via Internet Identity) can manage a customer ledger: create/update/delete customers, track outstanding balances and payment statuses, record payments (which updates balances and status), view aggregate stats (total customers, outstanding sum, counts by status), track a running 'total collected' amount with a reset option, bulk import customers from a CSV template, and generate/send WhatsApp payment reminder messages to customers. The backend also includes role-based access control initialization via a secret admin token and includes Caffeine blob-storage maintenance mixins for storage gateway authorization and dead-blob pruning.",
+  "architectural_notes": [
+    "Frontend uses TanStack React Query for all canister calls (queries/mutations) with cache invalidation on writes and toast notifications via `sonner`.",
+    "Frontend uses a dedicated `useActor` hook that creates a DFINITY actor based on the current Internet Identity and triggers access-control initialization on actor creation.",
+    "Authentication is handled by a custom React context/provider around `@dfinity/auth-client`, persisting identities across reloads and providing login/logout state machine.",
+    "UI composition follows a dashboard pattern (header/footer/main), with modal/dialog-based CRUD and confirmation flows; styling is Tailwind + shadcn/ui components + `next-themes` for dark/light mode.",
+    "Backend is a single Motoko actor that composes functionality via `include` mixins (authorization + blob-storage).",
+    "Authorization uses a small RBAC module (admin/user/guest) with first-admin assignment gated by an environment-provided admin token.",
+    "Data is stored in in-canister `Map` structures (customers keyed by name, profiles keyed by principal, payment records keyed by customer name) and a `totalCollectedPayments` accumulator.",
+    "Canister upgrade compatibility is managed via Motoko's migration pattern (`with migration = Migration.run`).",
+    "Backend exposes additional Caffeine blob-storage maintenance endpoints (authorized gateway list, dead-blob listing/pruning, cashier refill) controlled by env vars and principal authorization.",
+    "Repository now includes a reusable build-template (Dockerfile, deploy scripts, ICP YAML, workspace config) for building/deploying the React + Motoko canisters."
+  ],
+  "known_issues": [
+    "Backend `PaymentRecord.timestamp` is hardcoded to `0` (no real timestamps recorded).",
+    "Backend `paymentRecords` is keyed by `customerName`, so only the most recent payment per customer is retained (no payment history list).",
+    "Backend `createCustomer` does not check for duplicates; adding the same name will overwrite (Map `add`) rather than reject—frontend import logic expects possible 'already exists' errors.",
+    "Backend `deleteAllCustomers()` clears only `customers` but leaves `paymentRecords` and `totalCollectedPayments` intact, which may conflict with the UI wording about removing payment history.",
+    "Backend `recordPayment` does not validate `amount > 0`; a negative amount could increase balance and decrease `totalCollectedPayments`.",
+    "Excel import UI advertises `.xlsx` but parsing is CSV-by-text only (`file.text()` + comma split), so real XLSX files will not import correctly.",
+    "Floating-point (`Float`) is used for balances/collected totals, which can introduce rounding/precision issues for currency."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "IF-1",
+      "title": "Internet Identity authentication provider",
+      "synonyms": [
+        "II login",
+        "AuthClient integration"
+      ],
+      "description": "Provides login/logout and persisted identity via `@dfinity/auth-client` wrapped in a React context (`InternetIdentityProvider`), including login status flags and 30-day delegation TTL configuration.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-2",
+      "title": "Backend actor creation and per-identity actor caching",
+      "synonyms": [
+        "useActor hook",
+        "actor factory"
+      ],
+      "description": "Creates an anonymous or authenticated canister actor depending on identity, caches it in React Query by principal, and invalidates/refetches dependent queries when the actor changes.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-3",
+      "title": "Access control initialization and RBAC utilities",
+      "synonyms": [
+        "admin token init",
+        "user roles",
+        "authorization mixin"
+      ],
+      "description": "Motoko RBAC module supports admin/user/guest roles; initialization compares a user-provided secret to an env admin token to allow first-admin assignment. Includes endpoints to get caller role, check admin, and assign roles (admin-only). Frontend triggers initialization on actor creation using a secret read from URL hash/session.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-4",
+      "title": "User profile storage and first-time profile setup",
+      "synonyms": [
+        "profile setup modal",
+        "save profile"
+      ],
+      "description": "Backend stores a per-principal `UserProfile {name}` with query/save endpoints. Frontend fetches the caller profile and, if missing, forces a profile setup modal to capture and persist the user's name before showing the dashboard.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-5",
+      "title": "Customer CRUD (create/read/update/delete) with dialogs",
+      "synonyms": [
+        "customer management",
+        "customer records"
+      ],
+      "description": "Backend supports creating, reading, updating, deleting individual customers and deleting all customers. Frontend provides dialog-based create/edit forms with validation and confirmation dialogs for deletes, plus React Query invalidation and toast feedback on mutations.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-6",
+      "title": "Customer search and payment-status filtering",
+      "synonyms": [
+        "search customers",
+        "filter customers"
+      ],
+      "description": "Backend exposes search-by-term and filter-by-payment-status queries. Frontend currently performs client-side filtering in the dashboard UI and offers a status filter dropdown and search input.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-7",
+      "title": "Outstanding balances aggregation and dashboard statistics",
+      "synonyms": [
+        "stats cards",
+        "balances sum"
+      ],
+      "description": "Backend computes total outstanding balances across all customers. Frontend displays KPI cards (total customers, outstanding INR amount, counts by paid/partially paid/unpaid) and formats currency in INR.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-8",
+      "title": "Payment collection and automatic status updates",
+      "synonyms": [
+        "record payment",
+        "collect payment dialog"
+      ],
+      "description": "Backend records a payment against a customer, recalculates outstanding balance (floored at 0), and sets payment status to paid/partiallyPaid/unpaid based on the new balance. Frontend provides a payment collection dialog with balance preview and mutation-driven refresh.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-9",
+      "title": "Total collected payments tracking and reset",
+      "synonyms": [
+        "collected amount",
+        "reset collected"
+      ],
+      "description": "Backend maintains a running `totalCollectedPayments` accumulator updated on each recorded payment and exposes query/reset endpoints. Frontend displays the collected total in StatsCards and provides a confirmation dialog to reset it to zero.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-10",
+      "title": "Bulk customer import from CSV with validation and template download",
+      "synonyms": [
+        "Excel import",
+        "CSV import"
+      ],
+      "description": "Frontend provides a two-step import flow: upload/parse CSV, show validation results in a table, then import valid rows by creating customers (and attempting update on 'already exists'-style errors). Includes a downloadable CSV template and INR formatting in previews.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-11",
+      "title": "Theming (dark/light) and dashboard shell",
+      "synonyms": [
+        "next-themes",
+        "header/footer layout"
+      ],
+      "description": "App uses `next-themes` with Tailwind tokens for dark/light mode. Header includes branding, theme toggle, and user menu with logout; footer provides attribution. Layout switches between login screen, profile setup, and dashboard based on auth/profile state.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-12",
+      "title": "Caffeine blob-storage maintenance mixin",
+      "synonyms": [
+        "storage gateway authorization",
+        "dead blob pruning",
+        "cashier refill"
+      ],
+      "description": "Backend includes a storage mixin that can update an authorized gateway principal list from a cashier canister, check authorization, list dead blobs for deletion, confirm/prune dead blobs and trigger GC, and allow the cashier principal to top up cycles for the canister.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-13",
+      "title": "Canister upgrade migration wiring",
+      "synonyms": [
+        "stable migration",
+        "upgrade compatibility"
+      ],
+      "description": "Backend uses Motoko's `with migration = Migration.run` pattern, with a migration module that copies customers, user profiles, payment records, and total collected payments across versions.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-14",
+      "title": "WhatsApp payment reminder message dialog",
+      "synonyms": [
+        "WhatsApp message",
+        "payment reminder link",
+        "wa.me deep link"
+      ],
+      "description": "Frontend provides a WhatsApp message dialog that generates a payment reminder message for a selected customer (including balance/payment context) and opens a WhatsApp deep link (wa.me) to send the message. Includes helper utilities for message formatting/URL construction and integrates from the customer dashboard/table actions.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-default-whatsapp-outstanding-balance-reminder-message-template-so-it-uses-the-user-provided-marathi-text-with-paragraph-breaks-and-runtime-placeholders-for-customer-name-and-outstanding-balance-the-default-message-must-render-as-four-paragraphs-separated-by-blank-lines-1-2-customer-name-3-4-outstanding-balance-formatted-as-inr-using-the-existing-en-in-currency-formatting",
+      "title": "Update the default WhatsApp outstanding-balance reminder message template so it uses the user-provided Marathi text with paragraph breaks and runtime placeholders for Customer Name and Outstanding Balance.\n\nThe default message must render as four paragraphs separated by blank lines:\n1) \"नमस्कार\"\n2) \"<Customer Name>\"\n3) \"आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे.\"\n4) \"<Outstanding Balance>\" (formatted as INR using the existing en-IN currency formatting)",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Update WhatsApp payment reminder message template to Marathi with paragraph breaks and placeholders for Customer Name and Outstanding Balance",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Customer Balance Manager",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

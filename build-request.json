@@ -1,0 +1,48 @@
+{
+  "kind": "build_request",
+  "title": "Update default WhatsApp reminder message to Marathi with paragraph breaks",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Update the default WhatsApp outstanding-balance reminder message template so it uses the user-provided Marathi text with paragraph breaks and runtime placeholders for Customer Name and Outstanding Balance.\n\nThe default message must render as four paragraphs separated by blank lines:\n1) \"नमस्कार\"\n2) \"<Customer Name>\"\n3) \"आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे.\"\n4) \"<Outstanding Balance>\" (formatted as INR using the existing en-IN currency formatting)",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-7"
+        ],
+        "quotes": [
+          "set whatsapp massage  नमस्कार  (paragraph)(Customer Name) (paragraph)आपली खाते बाकी लवकरात लवकर जमा करून सहकार्य करावे. (paragraph) (Outstanding Balance)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When opening the \"Send outstanding via WhatsApp\" flow for a customer, the edit dialog’s default message contains the Marathi text split into four paragraphs separated by blank lines.",
+        "The second paragraph shows the selected customer’s name.",
+        "The last paragraph shows the selected customer’s outstanding balance formatted in INR using the existing currency formatting.",
+        "Sending the message generates a WhatsApp deep link that preserves the paragraph breaks in the prefilled text."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify files under frontend/src/components/ui (shadcn components are read-only).",
+    "Keep WhatsApp link generation based on the existing wa.me URL pattern."
+  ],
+  "nonGoals": [
+    "Changing backend storage or introducing new persisted per-user WhatsApp templates.",
+    "Adding new WhatsApp providers or integrations beyond the current deep-link approach."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-06T04:08:42.517Z",
+  "summary": "REQ-1 is partially implemented: the diff adds a Marathi outstanding-balance message formatter with four paragraphs separated by blank lines and INR formatting, and WhatsApp link generation continues to use the wa.me pattern with URL-encoding that should preserve paragraph breaks. However, the diff does not show any UI wiring to ensure the \"Send outstanding via WhatsApp\" edit dialog uses this new default message for the selected customer.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "When opening the \"Send outstanding via WhatsApp\" flow for a customer, the edit dialog’s default message contains the Marathi text split into four paragraphs separated by blank lines, with the second paragraph as the selected customer’s name and the last paragraph as the selected customer’s outstanding balance formatted in INR.",
+      "reason": "The diff only shows utility changes in `frontend/src/utils/whatsapp.ts` (adding `formatOutstandingMessage(...)`) and does not include any changes to the components/dialog flow that would set the edit dialog’s default message to this formatted template for the selected customer.",
+      "evidence": [
+        "frontend/src/utils/whatsapp.ts",
+        "frontend-file-summaries.txt (no actual component diff shown for CustomerTable/WhatsAppMessageDialog wiring)"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.62,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/utils/whatsapp.ts",
+    "project_state.json"
+  ]
+}

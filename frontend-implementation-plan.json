@@ -1,0 +1,29 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Update default WhatsApp outstanding reminder template to Marathi with paragraph breaks",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Update the default WhatsApp outstanding-balance reminder message to use the provided Marathi text as four paragraphs (blank-line separated) with runtime placeholders for customer name and INR-formatted outstanding balance, and ensure the wa.me deep link preserves the paragraph breaks.",
+      "acceptanceCriteria": [
+        "When opening the \"Send outstanding via WhatsApp\" flow for a customer, the edit dialog’s default message contains the Marathi text split into four paragraphs separated by blank lines.",
+        "The second paragraph shows the selected customer’s name.",
+        "The last paragraph shows the selected customer’s outstanding balance formatted in INR using the existing currency formatting.",
+        "Sending the message generates a WhatsApp deep link that preserves the paragraph breaks in the prefilled text."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/whatsapp.ts",
+          "operation": "modify",
+          "description": "Update formatOutstandingMessage() to return the required four-paragraph Marathi template separated by blank lines using newline characters (e.g., \"नमस्कार\\n\\n<name>\\n\\n...\\n\\n<INR amount>\") while keeping the existing en-IN INR currency formatting for the last paragraph; keep WhatsApp link generation using the existing wa.me pattern and ensure encoding preserves the newline breaks."
+        },
+        {
+          "path": "frontend/src/components/CustomerTable.tsx",
+          "operation": "modify",
+          "description": "Ensure the \"Send outstanding via WhatsApp\" action continues to populate WhatsAppMessageDialog with the updated multi-paragraph default message from formatOutstandingMessage() and uses generateWhatsAppLink() so the wa.me prefilled text preserves blank-line paragraph breaks."
+        }
+      ]
+    }
+  ]
+}
